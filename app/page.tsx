@@ -55,10 +55,21 @@ export default function Home() {
       return;
     }
 
-    // Simulate API call
     try {
-      // Replace with your API call
-      await new Promise((res) => setTimeout(res, 1200));
+      const response = await fetch('/api/waitlist', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(form),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Something went wrong');
+      }
+
       setStatus("success");
       setForm({
         name: "",
@@ -67,8 +78,8 @@ export default function Home() {
         insurances: [],
         problem: "",
       });
-    } catch {
-      setError("Something went wrong. Please try again.");
+    } catch (err: any) {
+      setError(err.message || "Something went wrong. Please try again.");
       setStatus("error");
     }
   };
