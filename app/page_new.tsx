@@ -7,7 +7,6 @@ import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { ImageWithFallback } from '@/components/ui/image-with-fallback'
-import { Modal } from '@/components/ui/modal'
 import { 
   Star, 
   Sparkles, 
@@ -28,12 +27,12 @@ export default function Home() {
   const [form, setForm] = useState({
     name: "",
     email: "",
+    phone: "",
     insurances: [] as string[],
     problem: "",
   });
   const [status, setStatus] = useState<"idle" | "success" | "error">("idle");
   const [error, setError] = useState<string | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const insuranceOptions = [
     "Health",
@@ -72,7 +71,7 @@ export default function Home() {
     setStatus("idle");
     setError(null);
 
-    if (!form.name || !form.email) {
+    if (!form.name || !form.email || !form.phone) {
       setError("Please fill all required fields.");
       setStatus("error");
       return;
@@ -97,6 +96,7 @@ export default function Home() {
       setForm({
         name: "",
         email: "",
+        phone: "",
         insurances: [],
         problem: "",
       });
@@ -106,15 +106,11 @@ export default function Home() {
     }
   };
 
-  const openModal = () => {
-    setIsModalOpen(true);
-  };
-
-  const closeModal = () => {
-    setIsModalOpen(false);
-    // Reset form state when closing modal
-    setStatus("idle");
-    setError(null);
+  const scrollToForm = () => {
+    const formElement = document.getElementById('waitlist-form');
+    if (formElement) {
+      formElement.scrollIntoView({ behavior: 'smooth' });
+    }
   };
 
   return (
@@ -197,7 +193,7 @@ export default function Home() {
             className="space-y-4 sm:space-y-0 sm:space-x-4 sm:flex sm:justify-center"
           >
             <Button
-              onClick={openModal}
+              onClick={scrollToForm}
               size="lg"
               className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white group"
             >
@@ -423,13 +419,175 @@ export default function Home() {
               </Card>
             </div>
             <Button
-              onClick={openModal}
+              onClick={scrollToForm}
               size="lg"
               className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white group"
             >
               Join Our Mission
               <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </Button>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Waitlist Form */}
+      <section id="waitlist-form" className="relative py-20 px-4">
+        <div className="max-w-2xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="text-center mb-12"
+          >
+            <Badge variant="secondary" className="mb-4 bg-green-500/20 text-green-300 border-green-500/30">
+              <Users className="w-4 h-4 mr-2" />
+              Join the Revolution
+            </Badge>
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+              Be the first to experience the future
+            </h2>
+            <p className="text-gray-300 text-lg">
+              Join thousands of Indians waiting for their personal AI insurance advocate
+            </p>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            viewport={{ once: true }}
+          >
+            <Card className="bg-white/5 border-white/10 backdrop-blur-sm">
+              <CardHeader>
+                <CardTitle className="text-2xl text-white text-center">
+                  Join the Waitlist
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <form onSubmit={handleSubmit} className="space-y-6">
+                  {status === "success" && (
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      className="bg-green-500/20 border border-green-500/30 text-green-300 rounded-lg p-4 text-center font-medium flex items-center justify-center space-x-2"
+                    >
+                      <CheckCircle2 className="w-5 h-5" />
+                      <span>Thanks! Please check your email to verify your spot.</span>
+                    </motion.div>
+                  )}
+                  {status === "error" && (
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      className="bg-red-500/20 border border-red-500/30 text-red-300 rounded-lg p-4 text-center font-medium flex items-center justify-center space-x-2"
+                    >
+                      <XCircle className="w-5 h-5" />
+                      <span>{error}</span>
+                    </motion.div>
+                  )}
+                  
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-gray-300 font-medium mb-2">
+                        Name<span className="text-red-400">*</span>
+                      </label>
+                      <Input
+                        name="name"
+                        type="text"
+                        className="bg-white/5 border-white/20 text-white placeholder:text-gray-400 focus:border-blue-500"
+                        value={form.name}
+                        onChange={handleChange}
+                        required
+                        placeholder="Your full name"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-gray-300 font-medium mb-2">
+                        Phone Number<span className="text-red-400">*</span>
+                      </label>
+                      <Input
+                        name="phone"
+                        type="tel"
+                        className="bg-white/5 border-white/20 text-white placeholder:text-gray-400 focus:border-blue-500"
+                        value={form.phone}
+                        onChange={handleChange}
+                        required
+                        placeholder="+91 98765 43210"
+                      />
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <label className="block text-gray-300 font-medium mb-2">
+                      Email<span className="text-red-400">*</span>
+                    </label>
+                    <Input
+                      name="email"
+                      type="email"
+                      className="bg-white/5 border-white/20 text-white placeholder:text-gray-400 focus:border-blue-500"
+                      value={form.email}
+                      onChange={handleChange}
+                      required
+                      placeholder="your.email@example.com"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-gray-300 font-medium mb-2">
+                      Which insurance do you currently have?
+                    </label>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                      {insuranceOptions.map((option) => (
+                        <motion.label
+                          key={option}
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          className={`flex items-center space-x-2 p-3 rounded-lg border cursor-pointer transition-all duration-300 ${
+                            form.insurances.includes(option)
+                              ? 'border-blue-500 bg-blue-500/20 text-blue-300'
+                              : 'border-white/20 bg-white/5 text-gray-300 hover:border-white/30 hover:bg-white/10'
+                          }`}
+                        >
+                          <input
+                            type="checkbox"
+                            name="insurances"
+                            value={option}
+                            checked={form.insurances.includes(option)}
+                            onChange={handleChange}
+                            className="w-4 h-4 text-blue-600 bg-transparent border-gray-300 rounded focus:ring-blue-500"
+                          />
+                          <span className="font-medium text-sm">{option}</span>
+                        </motion.label>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <label className="block text-gray-300 font-medium mb-2">
+                      What is your biggest insurance problem right now?{" "}
+                      <span className="text-gray-500 font-normal">(optional)</span>
+                    </label>
+                    <textarea
+                      name="problem"
+                      className="w-full bg-white/5 border border-white/20 text-white placeholder:text-gray-400 rounded-lg px-4 py-3 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all resize-none"
+                      rows={3}
+                      value={form.problem}
+                      onChange={handleChange}
+                      placeholder="Tell us about your insurance challenges..."
+                    />
+                  </div>
+                  
+                  <Button
+                    type="submit"
+                    className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold py-3 disabled:opacity-50"
+                    disabled={status === "success"}
+                  >
+                    {status === "success" ? "Welcome to the waitlist! 🎉" : "Join Waitlist"}
+                  </Button>
+                </form>
+              </CardContent>
+            </Card>
           </motion.div>
         </div>
       </section>
@@ -471,132 +629,6 @@ export default function Home() {
           </div>
         </div>
       </footer>
-
-      {/* Waitlist Modal */}
-      <Modal isOpen={isModalOpen} onClose={closeModal}>
-        <div className="p-8">
-          <div className="text-center mb-8">
-            <Badge variant="secondary" className="mb-4 bg-green-500/20 text-green-300 border-green-500/30">
-              <Users className="w-4 h-4 mr-2" />
-              Join the Revolution
-            </Badge>
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-              Be the first to experience the future
-            </h2>
-            <p className="text-gray-300 text-lg">
-              Join thousands of Indians waiting for their personal AI insurance advocate
-            </p>
-          </div>
-
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {status === "success" && (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="bg-green-500/20 border border-green-500/30 text-green-300 rounded-lg p-4 text-center font-medium flex items-center justify-center space-x-2"
-              >
-                <CheckCircle2 className="w-5 h-5" />
-                <span>Thanks for submitting!</span>
-              </motion.div>
-            )}
-            {status === "error" && (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="bg-red-500/20 border border-red-500/30 text-red-300 rounded-lg p-4 text-center font-medium flex items-center justify-center space-x-2"
-              >
-                <XCircle className="w-5 h-5" />
-                <span>{error}</span>
-              </motion.div>
-            )}
-            
-            <div className="space-y-4">
-              <div>
-                <label className="block text-gray-300 font-medium mb-2">
-                  Name<span className="text-red-400">*</span>
-                </label>
-                <Input
-                  name="name"
-                  type="text"
-                  className="bg-white/5 border-white/20 text-white placeholder:text-gray-400 focus:border-blue-500"
-                  value={form.name}
-                  onChange={handleChange}
-                  required
-                  placeholder="Your full name"
-                />
-              </div>
-              
-              <div>
-                <label className="block text-gray-300 font-medium mb-2">
-                  Email<span className="text-red-400">*</span>
-                </label>
-                <Input
-                  name="email"
-                  type="email"
-                  className="bg-white/5 border-white/20 text-white placeholder:text-gray-400 focus:border-blue-500"
-                  value={form.email}
-                  onChange={handleChange}
-                  required
-                  placeholder="your.email@example.com"
-                />
-              </div>
-            </div>
-            
-            <div>
-              <label className="block text-gray-300 font-medium mb-2">
-                Which insurance do you currently have?
-              </label>
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                {insuranceOptions.map((option) => (
-                  <motion.label
-                    key={option}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    className={`flex items-center space-x-2 p-3 rounded-lg border cursor-pointer transition-all duration-300 ${
-                      form.insurances.includes(option)
-                        ? 'border-blue-500 bg-blue-500/20 text-blue-300'
-                        : 'border-white/20 bg-white/5 text-gray-300 hover:border-white/30 hover:bg-white/10'
-                    }`}
-                  >
-                    <input
-                      type="checkbox"
-                      name="insurances"
-                      value={option}
-                      checked={form.insurances.includes(option)}
-                      onChange={handleChange}
-                      className="w-4 h-4 text-blue-600 bg-transparent border-gray-300 rounded focus:ring-blue-500"
-                    />
-                    <span className="font-medium text-sm">{option}</span>
-                  </motion.label>
-                ))}
-              </div>
-            </div>
-            
-            <div>
-              <label className="block text-gray-300 font-medium mb-2">
-                What is your biggest insurance problem right now?{" "}
-                <span className="text-gray-500 font-normal">(optional)</span>
-              </label>
-              <textarea
-                name="problem"
-                className="w-full bg-white/5 border border-white/20 text-white placeholder:text-gray-400 rounded-lg px-4 py-3 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all resize-none"
-                rows={3}
-                value={form.problem}
-                onChange={handleChange}
-                placeholder="Tell us about your insurance challenges..."
-              />
-            </div>
-            
-            <Button
-              type="submit"
-              className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold py-3 disabled:opacity-50"
-              disabled={status === "success"}
-            >
-              {status === "success" ? "Submitted! 🎉" : "Join Waitlist"}
-            </Button>
-          </form>
-        </div>
-      </Modal>
     </div>
   )
 }

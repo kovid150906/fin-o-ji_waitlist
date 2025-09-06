@@ -9,7 +9,6 @@ export type WaitlistEntry = {
   id?: number
   name: string
   email: string
-  phone: string
   insurances: string[]
   problem?: string
   created_at?: string

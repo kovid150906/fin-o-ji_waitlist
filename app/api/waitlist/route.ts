@@ -4,10 +4,10 @@ import { supabase } from '../../../lib/supabase'
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { name, email, phone, insurances, problem } = body
+    const { name, email, insurances, problem } = body
 
     // Validate required fields
-    if (!name || !email || !phone) {
+    if (!name || !email) {
       return NextResponse.json(
         { error: 'Missing required fields' },
         { status: 400 }
@@ -21,7 +21,6 @@ export async function POST(request: NextRequest) {
         {
           name,
           email,
-          phone,
           insurances,
           problem: problem || null,
         }
